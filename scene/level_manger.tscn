@@ -1,0 +1,22 @@
+[gd_scene format=4 uid="uid://bo7gewe36ve3s"]
+
+[ext_resource type="Script" uid="uid://dmpix1komjmbu" path="res://src/LevelManger.cs" id="1_3jttl"]
+[ext_resource type="PackedScene" uid="uid://dopdqulu7rs14" path="res://scene/map.tscn" id="2_3c04f"]
+[ext_resource type="PackedScene" uid="uid://t85qmu5owrum" path="res://scene/chest.tscn" id="3_3c04f"]
+
+[node name="LevelManger" type="Node2D" unique_id=370142584]
+script = ExtResource("1_3jttl")
+
+[node name="Map" parent="." unique_id=839856032 instance=ExtResource("2_3c04f")]
+tile_map_data = PackedByteArray("AAD9//7/AAAAAAAAAAD+//7/AAABAAIAAAD///7/AAABAAIAAAAAAP7/AAABAAIAAAABAP7/AAABAAIAAAACAP7/AAABAAIAAAADAP7/AAACAAAAAAADAP//AAACAAEAAAADAAAAAAACAAEAAAADAAEAAAACAAEAAAADAAIAAAACAAEAAAADAAMAAAACAAIAAAACAAMAAAABAAIAAAABAAMAAAABAAIAAAAAAAMAAAABAAIAAAD//wMAAAABAAIAAAD+/wMAAAABAAIAAAD9/wMAAAAAAAIAAAD9/wIAAAACAAEAAAD9/wEAAAACAAEAAAD9/wAAAAACAAEAAAD9////AAAAAAEAAAD+////AAABAAEAAAD/////AAABAAEAAAAAAP//AAABAAEAAAABAP//AAABAAEAAAACAP//AAABAAEAAAACAAAAAAABAAEAAAACAAEAAAABAAEAAAACAAIAAAABAAEAAAABAAIAAAABAAEAAAAAAAIAAAABAAEAAAD//wIAAAABAAEAAAD+/wIAAAABAAEAAAD+/wAAAAABAAEAAAD+/wEAAAABAAEAAAD//wEAAAABAAEAAAAAAAEAAAABAAEAAAABAAEAAAABAAEAAAABAAAAAAABAAEAAAAAAAAAAAABAAEAAAD//wAAAAABAAEAAAA=")
+
+[node name="Chests" type="Node" parent="." unique_id=391564562]
+
+[node name="Chest2" parent="Chests" unique_id=482198063 instance=ExtResource("3_3c04f")]
+
+[node name="Chest" parent="Chests" unique_id=1918413063 instance=ExtResource("3_3c04f")]
+position = Vector2(-24, -7)
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=822050963]
+position = Vector2(3, 13)
+rotation = 0.5235988
