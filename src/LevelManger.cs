@@ -41,24 +41,23 @@ public partial class LevelManger : Node2D
                     GD.Print($"Chest at {gridPosition} is grabbed.");
                 }
             }
-            else if(!mouseEvent.Pressed && mouseEvent.ButtonIndex == MouseButton.Left)
+            else if(!mouseEvent.Pressed && mouseEvent.ButtonIndex == MouseButton.Left && GrabbedChest != null)
             {
-                Vector2I gridPosition = TransformToGrid(GetGlobalMousePosition());
+                Vector2I gridPosition = TransformToGrid(GrabbedChest.GlobalPosition);
                 if(_chests.TryGetValue(gridPosition, out Chest chest))
                 {
-                    chest.PlayAnimation("gape");
+                    chest.Swallow(GrabbedChest);
+                    GrabbedChest = null;
                 }
                 else
                 {
-                    if(GrabbedChest != null)
-                    {
-                        GrabbedChest.IsGrabbed = false;
-                        GrabbedChest.InputPickable = true;
-                        AmendChestPosition(GrabbedChest);
-                        _chests[TransformToGrid(GrabbedChest.GlobalPosition)] = GrabbedChest;
-                        GD.Print($"Chest at {TransformToGrid(GrabbedChest.GlobalPosition)} is released.");
-                        GrabbedChest = null;
-                    }
+                    GrabbedChest.IsGrabbed = false;
+                    GrabbedChest.InputPickable = true;
+                    AmendChestPosition(GrabbedChest);
+                    _chests[TransformToGrid(GrabbedChest.GlobalPosition)] = GrabbedChest;
+                    GD.Print($"Chest at {TransformToGrid(GrabbedChest.GlobalPosition)} is released.");
+                    GrabbedChest = null;
+                    
                 }
                 
             }

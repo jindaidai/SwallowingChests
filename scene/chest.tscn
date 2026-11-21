@@ -56,9 +56,10 @@ _data = {
 }
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3c04f"]
-size = Vector2(8, 8)
+size = Vector2(12, 12)
 
 [node name="Chest" type="CharacterBody2D" unique_id=482198063 groups=["Chest"]]
+y_sort_enabled = true
 collision_layer = 2
 input_pickable = true
 script = ExtResource("1_26f88")
@@ -72,4 +73,5 @@ region_rect = Rect2(0, 0, 16, 16)
 libraries/ = SubResource("AnimationLibrary_bgh66")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=844513973]
+visible = false
 shape = SubResource("RectangleShape2D_3c04f")

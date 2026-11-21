@@ -11,7 +11,45 @@ public partial class Chest : CharacterBody2D
     {
         White,Green,Blue,Black,Gloden
     }
-    public Status Stats;
+    private Status _stats = Status.White;
+    [Export]
+    public Status Stats 
+    {
+        get => _stats;
+        set
+        {
+            _stats = value;
+            switch(_stats)
+            {
+                case Status.White:
+                    sprite.Modulate = new Color(1,1,1,1);
+                    Weight = 1;
+                    _maxWeight = 1;
+                    break;
+                case Status.Green:
+                    sprite.Modulate = new Color(91/255f,168/255f,66/255f,1);
+                    Weight = 2;
+                    _maxWeight = 2;
+                    break;
+                case Status.Blue:
+                    sprite.Modulate = new Color(0,0,255,1);
+                    Weight = 3;
+                    _maxWeight = 3;
+                    break;
+                case Status.Black:
+                    sprite.Modulate = new Color(0,0,0,1);
+                    Weight = 4;
+                    _maxWeight = 4;
+                    break;
+                case Status.Gloden:
+                    sprite.Modulate = new Color(255,215,0,1);
+                    Weight = 2;
+                    _maxWeight = 0;
+                    break;
+            }
+        }
+    }
+    private int _maxWeight;
     public int Weight;
     public Stack<Chest> Chests = new();
     private bool _isGrabbed = false;
@@ -47,7 +85,7 @@ public partial class Chest : CharacterBody2D
 
     public void Swallow(Chest chest)
     {
-        if(Weight + chest.Weight >= 2 * Weight)
+        if(Weight + chest.Weight > 2 * _maxWeight)
             return;
         Weight += chest.Weight;
         if(Stats != Status.White)
@@ -82,7 +120,7 @@ public partial class Chest : CharacterBody2D
     
     public void Drag()
     {
-        if(GlobalPosition.DistanceTo(GetGlobalMousePosition()) < 4)
+        if(GlobalPosition.DistanceTo(GetGlobalMousePosition()) < 2)
         {
             Velocity = Vector2.Zero;
             return;
@@ -115,4 +153,5 @@ public partial class Chest : CharacterBody2D
         ProcessMode = Node.ProcessModeEnum.Inherit;
         Show();
     }
+
 }
