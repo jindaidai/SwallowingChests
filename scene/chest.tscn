@@ -59,12 +59,14 @@ _data = {
 size = Vector2(12, 12)
 
 [node name="Chest" type="CharacterBody2D" unique_id=482198063 groups=["Chest"]]
-y_sort_enabled = true
-collision_layer = 2
+z_index = 1
+collision_layer = 4
+collision_mask = 3
 input_pickable = true
 script = ExtResource("1_26f88")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=179260752]
+y_sort_enabled = true
 texture = ExtResource("2_c0k1r")
 region_enabled = true
 region_rect = Rect2(0, 0, 16, 16)
@@ -73,5 +75,22 @@ region_rect = Rect2(0, 0, 16, 16)
 libraries/ = SubResource("AnimationLibrary_bgh66")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=844513973]
-visible = false
 shape = SubResource("RectangleShape2D_3c04f")
+
+[node name="RayCast" type="Node2D" parent="." unique_id=1154465845]
+
+[node name="RayCast2D" type="RayCast2D" parent="RayCast" unique_id=1033442138]
+target_position = Vector2(0, 16)
+collision_mask = 3
+
+[node name="RayCast2D2" type="RayCast2D" parent="RayCast" unique_id=613039967]
+target_position = Vector2(16, 0)
+collision_mask = 3
+
+[node name="RayCast2D3" type="RayCast2D" parent="RayCast" unique_id=148621611]
+target_position = Vector2(0, -16)
+collision_mask = 3
+
+[node name="RayCast2D4" type="RayCast2D" parent="RayCast" unique_id=226260098]
+target_position = Vector2(-16, 0)
+collision_mask = 3

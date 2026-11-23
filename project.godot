@@ -30,6 +30,8 @@ project/assembly_name="吞箱子"
 [layer_names]
 
 2d_physics/layer_1="ev"
+2d_physics/layer_2="blue"
+2d_physics/layer_3="chest"
 
 [physics]
 

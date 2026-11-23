@@ -5,8 +5,9 @@ using System.Collections.Generic;
 
 public partial class LevelManger : Node2D
 {
-    TileMapLayer tileMapLayer;
+    TileManager tileMapLayer;
     Node chests;
+    
     public Chest GrabbedChest;
     Dictionary<Vector2I, Chest> _chests = new();
 
@@ -14,7 +15,7 @@ public partial class LevelManger : Node2D
     {
         base._Ready();
         chests = GetNode("Chests");
-        tileMapLayer = GetNode<TileMapLayer>("Map");
+        tileMapLayer = GetNode<TileManager>("Map");
 
         foreach (Chest chest in chests.GetChildren())
         {
@@ -41,12 +42,23 @@ public partial class LevelManger : Node2D
                     GD.Print($"Chest at {gridPosition} is grabbed.");
                 }
             }
+            else if(mouseEvent.Pressed && mouseEvent.ButtonIndex == MouseButton.Right)
+            {
+                Vector2I gridPosition = TransformToGrid(GetGlobalMousePosition());
+                if(_chests.TryGetValue(gridPosition, out Chest chest))
+                {
+                    Chest SpatChest = chest.Spit();
+                    if(SpatChest != null)
+                        _chests[TransformToGrid(SpatChest.GlobalPosition)] = SpatChest;
+                }
+            }
             else if(!mouseEvent.Pressed && mouseEvent.ButtonIndex == MouseButton.Left && GrabbedChest != null)
             {
                 Vector2I gridPosition = TransformToGrid(GrabbedChest.GlobalPosition);
                 if(_chests.TryGetValue(gridPosition, out Chest chest))
                 {
                     chest.Swallow(GrabbedChest);
+                    GrabbedChest.IsGrabbed = false;
                     GrabbedChest = null;
                 }
                 else
@@ -67,6 +79,11 @@ public partial class LevelManger : Node2D
     public override void _PhysicsProcess(double delta)
     {
         base._PhysicsProcess(delta);
+        if(GrabbedChest != null)
+        {
+            Vector2I nextCell = TransformToGrid(GrabbedChest.GlobalPosition);
+            tileMapLayer.CheckFadedCell(nextCell);
+        }
     }
 
     public Vector2I TransformToGrid(Vector2 position)
@@ -75,7 +92,6 @@ public partial class LevelManger : Node2D
         return tileMapLayer.LocalToMap(localPosition);
     }
 
-    
     public void AmendChestPosition(Chest chest)
     {
         chest.GlobalPosition = tileMapLayer.MapToLocal(TransformToGrid(chest.GlobalPosition));

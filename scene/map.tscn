@@ -2,47 +2,65 @@
 
 [ext_resource type="Texture2D" uid="uid://2op4t2q02yjq" path="res://texture/tile/tile.png" id="1_rgtto"]
 [ext_resource type="Texture2D" uid="uid://uaeh6tt45plm" path="res://texture/tile/wall.png" id="2_wpp1k"]
+[ext_resource type="Script" uid="uid://bxqj3vu4dl3da" path="res://src/TileManager.cs" id="3_h0nt1"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_h0nt1"]
 texture = ExtResource("1_rgtto")
 0:0/0 = 0
+0:0/0/z_index = -1
 0:0/0/terrain_set = 0
-0:0/0/terrain = 1
+0:0/0/terrain = 0
 1:0/0 = 0
+1:0/0/z_index = -1
 1:0/0/terrain_set = 0
-1:0/0/terrain = 1
+1:0/0/terrain = 0
 1:0/0/probability = 0.5
 0:1/0 = 0
+0:1/0/z_index = -1
 0:1/0/terrain_set = 0
-0:1/0/terrain = 1
+0:1/0/terrain = 0
 0:1/0/probability = 0.5
 1:1/0 = 0
+1:1/0/z_index = -1
 1:1/0/terrain_set = 0
-1:1/0/terrain = 1
+1:1/0/terrain = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_nf54y"]
 texture = ExtResource("2_wpp1k")
-0:0/size_in_atlas = Vector2i(1, 2)
-0:0/next_alternative_id = 2
-0:0/0 = 0
-0:0/0/texture_origin = Vector2i(0, 8)
-0:0/0/z_index = 1
-0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
-0:2/0 = 0
-0:2/0/texture_origin = Vector2i(0, 6)
-0:2/0/z_index = 1
+1:0/size_in_atlas = Vector2i(1, 2)
+1:0/0 = 0
+1:0/0/texture_origin = Vector2i(0, 8)
+1:0/0/z_index = 1
+1:0/0/y_sort_origin = 4
+1:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 4, -8, 4)
+2:0/size_in_atlas = Vector2i(1, 2)
+2:0/0 = 0
+2:0/0/texture_origin = Vector2i(0, 8)
+2:0/0/z_index = 1
+2:0/0/y_sort_origin = 4
+2:0/0/physics_layer_1/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 4, -8, 4)
+3:0/size_in_atlas = Vector2i(1, 2)
+3:0/0 = 0
+3:0/0/texture_origin = Vector2i(0, 8)
+3:0/0/z_index = 1
+3:0/0/y_sort_origin = 4
+3:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 4, -8, 4)
+0:1/0 = 0
+0:1/0/texture_origin = Vector2i(0, 6)
+0:1/0/z_index = 1
 
 [sub_resource type="TileSet" id="TileSet_srs1g"]
 physics_layer_0/collision_layer = 1
-physics_layer_0/collision_mask = 2
+physics_layer_0/collision_mask = 0
+physics_layer_1/collision_layer = 2
+physics_layer_1/collision_mask = 0
 terrain_set_0/mode = 0
-terrain_set_0/terrain_0/name = "wall"
-terrain_set_0/terrain_0/color = Color(0.5, 0.34375, 0.25, 1)
-terrain_set_0/terrain_1/name = "air"
-terrain_set_0/terrain_1/color = Color(0.5, 0.4375, 0.25, 1)
+terrain_set_0/terrain_0/name = "air"
+terrain_set_0/terrain_0/color = Color(0.5, 0.4375, 0.25, 1)
 sources/1 = SubResource("TileSetAtlasSource_h0nt1")
 sources/2 = SubResource("TileSetAtlasSource_nf54y")
 
 [node name="Map" type="TileMapLayer" unique_id=839856032]
 y_sort_enabled = true
 tile_set = SubResource("TileSet_srs1g")
+script = ExtResource("3_h0nt1")

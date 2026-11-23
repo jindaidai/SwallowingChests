@@ -5,14 +5,15 @@ using System.Collections.Generic;
 public partial class Chest : CharacterBody2D
 {
     AnimationPlayer animationPlayer;
+    Node2D rayCast;
     Sprite2D sprite;
     public LevelManger levelManger;
     public enum Status
     {
         White,Green,Blue,Black,Gloden
     }
-    private Status _stats = Status.White;
-    [Export]
+    [Export] private Status _stats;
+    
     public Status Stats 
     {
         get => _stats;
@@ -32,7 +33,8 @@ public partial class Chest : CharacterBody2D
                     _maxWeight = 2;
                     break;
                 case Status.Blue:
-                    sprite.Modulate = new Color(0,0,255,1);
+                    sprite.Modulate = new Color(60/255f,121/255f,207/255f,1);
+                    SetCollisionMaskValue(2,false);
                     Weight = 3;
                     _maxWeight = 3;
                     break;
@@ -61,7 +63,7 @@ public partial class Chest : CharacterBody2D
             _isGrabbed = value;
             if(_isGrabbed)
             {
-                ZIndex = 100;
+                ZIndex = 1;
                 sprite.Scale = new Vector2(1.2f, 1.2f);
             }
             else
@@ -72,28 +74,23 @@ public partial class Chest : CharacterBody2D
             }
         }
     }
+    public bool IsStrengthened = false;
 
     public override void _Ready()
     {
         base._Ready();
         animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
         sprite = GetNode<Sprite2D>("Sprite2D");
+        rayCast  = GetNode<Node2D>("RayCast");
+        Stats = _stats;   
 
         Connect(CharacterBody2D.SignalName.MouseEntered,Callable.From(() => {if(levelManger.GrabbedChest != null && !IsGrabbed) PlayAnimation("open");}));
         Connect(CharacterBody2D.SignalName.MouseExited,Callable.From(() => {if(GetCurrentAnimation() == "open") PlayAnimation("normal");}));
     }
 
     public void Swallow(Chest chest)
-    {
-        if(Weight + chest.Weight > 2 * _maxWeight)
-            return;
-        Weight += chest.Weight;
-        if(Stats != Status.White)
-        {
-            Chests.Push(chest);
-            chest.Deactivate();
-        }
-        else
+    {   
+        if(Stats == Status.White)
         {
             Stats = chest.Stats switch
             {
@@ -104,6 +101,23 @@ public partial class Chest : CharacterBody2D
                 _ => Stats
             };
             chest.QueueFree();
+        }
+        else if(Stats == Status.Green && IsStrengthened)
+        {
+            
+        }
+        else if(chest.Stats == Status.Green)
+        {
+            IsStrengthened = true;
+        }
+        else
+        {
+            if(Weight + chest.Weight > 2 * _maxWeight)
+                return;
+            Weight += chest.Weight;
+
+            Chests.Push(chest);
+            chest.Deactivate();
         } 
     }
 
@@ -111,9 +125,8 @@ public partial class Chest : CharacterBody2D
     {
         base._PhysicsProcess(delta);
         if(IsGrabbed)
-        {
             Drag();
-        }
+
 
         MoveAndSlide();
     }
@@ -145,13 +158,42 @@ public partial class Chest : CharacterBody2D
     {
         DisableMode = CollisionObject2D.DisableModeEnum.Remove;
         ProcessMode = Node.ProcessModeEnum.Disabled;
+        
         Hide();
     }
     
     public void Activate()
     {
-        ProcessMode = Node.ProcessModeEnum.Inherit;
         Show();
+        
+        ProcessMode = Node.ProcessModeEnum.Inherit;
     }
 
+    public Chest Spit()
+    {
+        GD.Print(1);
+        foreach(RayCast2D rayCast2D in rayCast.GetChildren())
+        {
+            if(!rayCast2D.IsColliding())
+            {
+                GD.Print(2);
+                if(Chests.TryPop(out Chest chest))
+                {
+                    GD.Print(3);
+                    Vector2 dir = rayCast2D.TargetPosition.Normalized();
+                    chest.GlobalPosition = GlobalPosition + dir * 16;
+                    chest.Activate();
+
+                    return chest;
+                }
+                else
+                {
+                    GD.Print(4); 
+                    return null;
+                }
+                
+            }
+        }
+        return null;
+    }
 }
