@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 public partial class Chest : CharacterBody2D
 {
+    [Signal] public delegate void ChestStrengthenedEventHandler(Chest chest);
+    PackedScene particles;
     AnimationPlayer animationPlayer;
     Node2D rayCast;
     Sprite2D sprite;
@@ -24,27 +26,32 @@ public partial class Chest : CharacterBody2D
             {
                 case Status.White:
                     sprite.Modulate = new Color(1,1,1,1);
+                    SpawnParticles(new Color(1,1,1,1));
                     Weight = 1;
                     _maxWeight = 1;
                     break;
                 case Status.Green:
                     sprite.Modulate = new Color(91/255f,168/255f,66/255f,1);
+                    SpawnParticles(new Color(91/255f,168/255f,66/255f,1));
                     Weight = 2;
                     _maxWeight = 2;
                     break;
                 case Status.Blue:
                     sprite.Modulate = new Color(60/255f,121/255f,207/255f,1);
+                    SpawnParticles(new Color(60/255f,121/255f,207/255f,1));
                     SetCollisionMaskValue(2,false);
                     Weight = 3;
                     _maxWeight = 3;
                     break;
                 case Status.Black:
                     sprite.Modulate = new Color(0,0,0,1);
+                    SpawnParticles(new Color(0,0,0,1));
                     Weight = 4;
                     _maxWeight = 4;
                     break;
                 case Status.Gloden:
                     sprite.Modulate = new Color(255,215,0,1);
+                    SpawnParticles(new Color(255,215,0,1));
                     Weight = 2;
                     _maxWeight = 0;
                     break;
@@ -53,6 +60,7 @@ public partial class Chest : CharacterBody2D
     }
     private int _maxWeight;
     public int Weight;
+    public Chest ConnectedChest;
     public Stack<Chest> Chests = new();
     private bool _isGrabbed = false;
     public bool IsGrabbed
@@ -79,6 +87,7 @@ public partial class Chest : CharacterBody2D
     public override void _Ready()
     {
         base._Ready();
+        particles = GD.Load<PackedScene>("uid://cuogldqi7px2n");
         animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
         sprite = GetNode<Sprite2D>("Sprite2D");
         rayCast  = GetNode<Node2D>("RayCast");
@@ -88,8 +97,9 @@ public partial class Chest : CharacterBody2D
         Connect(CharacterBody2D.SignalName.MouseExited,Callable.From(() => {if(GetCurrentAnimation() == "open") PlayAnimation("normal");}));
     }
 
-    public void Swallow(Chest chest)
+    public bool Swallow(Chest chest)
     {   
+        PlayAnimation("swallow");
         if(Stats == Status.White)
         {
             Stats = chest.Stats switch
@@ -102,23 +112,50 @@ public partial class Chest : CharacterBody2D
             };
             chest.QueueFree();
         }
-        else if(Stats == Status.Green && IsStrengthened)
-        {
-            
-        }
         else if(chest.Stats == Status.Green)
         {
-            IsStrengthened = true;
+            EmitSignal("ChestStrengthened", this);
+
+            chest.QueueFree();
         }
         else
         {
             if(Weight + chest.Weight > 2 * _maxWeight)
-                return;
+                return false;
             Weight += chest.Weight;
 
             Chests.Push(chest);
             chest.Deactivate();
         } 
+        return true;
+    }
+
+    public bool Spit(out Chest chest)
+    {
+        foreach(RayCast2D rayCast2D in rayCast.GetChildren())
+        {
+            if(!rayCast2D.IsColliding())
+            {
+                if(Chests.TryPop(out Chest chest1))
+                {
+                    Vector2 dir = rayCast2D.TargetPosition.Normalized();
+                    chest1.GlobalPosition = GlobalPosition + dir * 16;
+                    chest1.Activate();
+                    Weight -= chest1.Weight;
+
+                    chest = chest1;
+                    return true;
+                }
+                else
+                {   
+                    chest = null;
+                    return false;
+                }
+                
+            }
+        }
+        chest = null;
+        return false;
     }
 
     public override void _PhysicsProcess(double delta)
@@ -169,31 +206,11 @@ public partial class Chest : CharacterBody2D
         ProcessMode = Node.ProcessModeEnum.Inherit;
     }
 
-    public Chest Spit()
+    public void SpawnParticles(Color color)
     {
-        GD.Print(1);
-        foreach(RayCast2D rayCast2D in rayCast.GetChildren())
-        {
-            if(!rayCast2D.IsColliding())
-            {
-                GD.Print(2);
-                if(Chests.TryPop(out Chest chest))
-                {
-                    GD.Print(3);
-                    Vector2 dir = rayCast2D.TargetPosition.Normalized();
-                    chest.GlobalPosition = GlobalPosition + dir * 16;
-                    chest.Activate();
-
-                    return chest;
-                }
-                else
-                {
-                    GD.Print(4); 
-                    return null;
-                }
-                
-            }
-        }
-        return null;
+        var particleInstance = particles.Instantiate<SpawnParticle>();
+        particleInstance.ChangeColor(color);
+        AddChild(particleInstance);
+        particleInstance.GlobalPosition = GlobalPosition;
     }
 }

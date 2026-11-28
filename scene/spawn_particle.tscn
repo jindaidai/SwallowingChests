@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://cuogldqi7px2n"]
+
+[ext_resource type="Script" uid="uid://c3eibr067pagj" path="res://src/SpawnParticle.cs" id="1_d5qop"]
+
+[sub_resource type="Curve" id="Curve_ffdq4"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.37174726), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_bmhsi"]
+curve = SubResource("Curve_ffdq4")
+
+[sub_resource type="Curve" id="Curve_ps165"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_6otkm"]
+curve = SubResource("Curve_ps165")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_srs1g"]
+particle_flag_disable_z = true
+emission_shape = 2
+emission_sphere_radius = 5.0
+spread = 180.0
+radial_velocity_min = 4.9999776
+radial_velocity_max = 9.999977
+radial_velocity_curve = SubResource("CurveTexture_bmhsi")
+gravity = Vector3(0, 0, 0)
+scale_min = 3.0
+scale_max = 5.0
+scale_curve = SubResource("CurveTexture_6otkm")
+
+[node name="SpawnParticle" type="GPUParticles2D" unique_id=333690357]
+emitting = false
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_srs1g")
+script = ExtResource("1_d5qop")
